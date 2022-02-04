@@ -7,7 +7,7 @@ import torch
 from skimage.transform import resize
 from torch.utils.data import Dataset
 
-from utils import map_fn
+from monorec.utils import map_fn
 
 import os
 if os.path.exists(os.path.abspath(os.path.join(__file__, os.pardir, 'oxford_robotcar'))):

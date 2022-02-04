@@ -11,7 +11,7 @@ from torch.utils.data import Dataset
 import os
 if os.path.exists(os.path.abspath(os.path.join(__file__, os.pardir, 'oxford_robotcar'))):
     from data_loader.oxford_robotcar.interpolate_poses import interpolate_poses
-from utils import map_fn
+from monorec.utils import map_fn
 
 
 class TUMRGBDDataset(Dataset):

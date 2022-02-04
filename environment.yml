@@ -4,18 +4,18 @@
     - conda-forge
     - anaconda
   dependencies:
-    - python=3.6
-    - pytorch=1.5.0
+    - python=3.8
+    - pytorch
+    - pytorch-lightning
     - torchvision
     - jupyter
     - tensorboard
-    - opencv=4.2.0
+    - tensorboardx
+    - opencv
     - scipy
     - kornia
     - scikit-image
     - tqdm
-    - tensorboardx
     - pip
     - pip:
         - pykitti
-        - colour_demosaicing

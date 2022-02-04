@@ -1,5 +1,5 @@
 import importlib
-from utils import Timer
+from monorec.utils import Timer
 
 
 class TensorboardWriter():

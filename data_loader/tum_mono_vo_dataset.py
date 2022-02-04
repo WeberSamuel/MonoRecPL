@@ -8,7 +8,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 from scipy.spatial.transform import Rotation
 
-from utils import map_fn
+from monorec.utils import map_fn
 
 
 class TUMMonoVOMultiDataset(Dataset):

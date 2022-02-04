@@ -3,8 +3,8 @@ import torchvision
 from torch import nn
 from torch.nn import functional as F
 
-from model.layers import Backprojection, point_projection, ssim
-from utils import create_mask, mask_mean
+from monorec.model.layers import Backprojection, point_projection, ssim
+from monorec.utils import create_mask, mask_mean
 
 
 def compute_errors(img0, img1, mask=None):
@@ -36,9 +36,9 @@ def reprojection_loss(depth_prediction: torch.Tensor, data_dict, automasking=Fal
     batch_size, channels, height, width = keyframe.shape
     frame_count = len(frames)
     keyframe_extrinsics = torch.inverse(keyframe_pose)
-    extrinsics = [torch.inverse(pose) for pose in poses]
+    extrinsics = torch.stack([torch.inverse(pose) for pose in poses])
 
-    reprojections = []
+    reprojections_list = []
     if border > 0:
         masks = [create_mask(batch_size, height, width, border, keyframe.device) for _ in range(frame_count)]
         warped_masks = []
@@ -49,11 +49,11 @@ def reprojection_loss(depth_prediction: torch.Tensor, data_dict, automasking=Fal
     for i, (frame, extrinsic, intrinsic) in enumerate(zip(frames, extrinsics, intrinsics)):
         cam_points = backproject_depth(1 / depth_prediction, torch.inverse(keyframe_intrinsics))
         pix_coords = point_projection(cam_points, batch_size, height, width, intrinsic, extrinsic @ keyframe_pose)
-        reprojections.append(F.grid_sample(frame + 1.5, pix_coords, padding_mode="zeros"))
+        reprojections_list.append(F.grid_sample(frame + 1.5, pix_coords, padding_mode="zeros"))
         if border > 0:
             warped_masks.append(F.grid_sample(masks[i], pix_coords, padding_mode="zeros"))
 
-    reprojections = torch.stack(reprojections, dim=1).view(batch_size * frame_count, channels, height, width)
+    reprojections = torch.stack(reprojections_list, dim=1).view(batch_size * frame_count, channels, height, width)
     mask = reprojections[:, 0, :, :] == 0
     reprojections -= 1.0
 
@@ -195,7 +195,7 @@ class PerceptualError(nn.Module):
 
         if mask is not None:
             if not self.small_features:
-                mask = F.upsample(mask.to(dtype=torch.float).unsqueeze(1), (h, w), mode="bilinear").squeeze(1)
+                mask = F.interpolate(mask.to(dtype=torch.float).unsqueeze(1), (h, w), mode="bilinear").squeeze(1)
             mask = mask > 0
             return errors, mask
         else:

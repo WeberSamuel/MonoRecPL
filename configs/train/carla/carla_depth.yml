@@ -1,0 +1,43 @@
+lr_scheduler:
+  class_path: torch.optim.lr_scheduler.MultiStepLR
+  init_args:
+    milestones:
+      - 10
+    gamma: 0.05
+model:
+  pretrain_mode: DEPTH_ONLY
+  pretrain_dropout: 0
+  augmentation: depth
+  use_mono: true
+  use_stereo: false
+  training_stage: DEPTH
+  alpha: 1
+optimizer:
+  class_path: torch.optim.Adam
+  init_args:
+    lr: 0.002
+seed_everything: 42
+trainer:
+  gpus: 1
+  max_epochs: 70
+  accumulate_grad_batches: 10
+  callbacks:
+    - class_path: callbacks.image_logger.MonoRecImageLoggerCallback
+data:
+  class_path: monorec.data_loader.data_loaders.CarlaDataModule
+  init_args:
+    batch_size: 4
+    validation_split: 0.01
+    num_workers: 0
+    sequences: 
+      - "00"
+    dataset_dir: "dataset"
+    frame_count: 2
+    shuffle: true
+    target_image_size:
+      - 256
+      - 512
+    return_stereo: true
+    return_mvobj_mask: true
+    sparsity: 0.0
+    max_depth: 52000

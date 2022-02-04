@@ -2,7 +2,7 @@ from array import array
 
 import torch
 
-from model.layers import Backprojection
+from monorec.model.layers import Backprojection
 
 
 class PLYSaver(torch.nn.Module):

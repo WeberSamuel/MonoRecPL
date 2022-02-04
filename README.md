@@ -1,7 +1,7 @@
-# MonoRec
+# MonoRecPL [WIP]
 [**Paper**](https://arxiv.org/abs/2011.11814) |  [**Video** (CVPR)](https://youtu.be/XimdlXUamo0) | [**Video** (Reconstruction)](https://youtu.be/-gDSBIm0vgk) | [**Project Page**](https://vision.in.tum.de/research/monorec)
 
-This repository is the official implementation of the paper:
+This repository is the unofficial Pytorch Ligtning implementation of the paper:
 
 > **MonoRec: Semi-Supervised Dense Reconstruction in Dynamic Environments from a Single Moving Camera**
 >
@@ -11,7 +11,7 @@ This repository is the official implementation of the paper:
 
 <a href="https://youtu.be/-gDSBIm0vgk"><div style="text-align:center"><img src="./pictures/frames_pointcloud.gif" style="height:auto;width:70%px"/></div></a>
 
-If you find our work useful, please consider citing our paper:
+If you find MonoRec useful, please consider citing the original paper:
 ```
 @InProceedings{wimbauer2020monorec,
   title = {{MonoRec}: Semi-Supervised Dense Reconstruction in Dynamic Environments from a Single Moving Camera},

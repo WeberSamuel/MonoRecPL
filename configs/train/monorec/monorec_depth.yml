@@ -1,0 +1,55 @@
+lr_scheduler:
+  class_path: torch.optim.lr_scheduler.StepLR
+  init_args:
+    step_size: 65
+    gamma: 0.1
+model:
+  pretrain_mode: DEPTH_ONLY
+  pretrain_dropout: 0
+  augmentation: depth
+  use_mono: true
+  use_stereo: false
+  training_stage: DEPTH
+  alpha: 0.5
+optimizer:
+  class_path: torch.optim.Adam
+  init_args:
+    lr: 0.0001
+    weight_decay: 0
+    amsgrad: true
+seed_everything: 42
+trainer:
+  num_nodes: 1
+  gpus: 1
+  max_epochs: 70
+  precision: 16
+  benchmark: true
+  deterministic: true
+data:
+  class_path: monorec.data_loader.data_loaders.KittiOdometryDataModule
+  init_args:
+    batch_size: 8
+    validation_split: 0.0
+    num_workers: 16
+    dataset_dir: "../data/dataset"
+    depth_folder: image_depth_sparse
+    frame_count: 2
+    shuffle: true
+    sequences:
+    - '01'
+    - '02'
+    - '06'
+    - '08'
+    - '09'
+    - '10'
+    target_image_size:
+    - 256
+    - 512
+    use_color: true
+    use_color_augmentation: true
+    use_dso_poses: true
+    lidar_depth: false
+    dso_depth: true
+    return_stereo: true
+    return_mvobj_mask: true
+ckpt_path: "save/depth"

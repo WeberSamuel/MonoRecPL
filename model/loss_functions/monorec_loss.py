@@ -1,7 +1,7 @@
 import torch
 from torch.nn import functional as F
 
-from utils import mask_mean
+from monorec.utils import mask_mean
 from .common_losses import compute_errors, sparse_depth_loss, edge_aware_smoothness_loss, reprojection_loss, \
     selfsup_loss
 
@@ -34,7 +34,7 @@ def depth_loss(data_dict, alpha=None, roi=None, options=()):
     for i, depth_prediction in enumerate(depth_predictions):
         depth_prediction[depth_prediction <= 0.0] = 0.0
         if depth_prediction.shape[2] != depth_gt.shape[2]:
-            depth_prediction = torch.nn.functional.upsample(depth_prediction, (depth_gt.shape[2], depth_gt.shape[3]))
+            depth_prediction = torch.nn.functional.interpolate(depth_prediction, (depth_gt.shape[2], depth_gt.shape[3]))
         sdl = sparse_depth_loss(depth_prediction, depth_gt, l2=False)
         md2l = selfsup_loss(depth_prediction, data_dict, scale=i, use_mono=use_mono, use_stereo=use_stereo, automasking=automasking, error_function=error_function, combine_frames=combine_frames, mask_border=mask_border)
         sdl_sum += sdl
@@ -152,8 +152,8 @@ def mask_refinement_loss(data_dict, alpha=None, roi=None, options=()):
 
     for scale, (mono_pred, stereo_pred) in enumerate(zip(mono_preds, stereo_preds)):
         if mono_pred.shape[2] != depth_gt.shape[2]:
-            mono_pred = torch.nn.functional.upsample(mono_pred, (depth_gt.shape[2], depth_gt.shape[3]))
-            stereo_pred = torch.nn.functional.upsample(stereo_pred, (depth_gt.shape[2], depth_gt.shape[3]))
+            mono_pred = torch.nn.functional.interpolate(mono_pred, (depth_gt.shape[2], depth_gt.shape[3]))
+            stereo_pred = torch.nn.functional.interpolate(stereo_pred, (depth_gt.shape[2], depth_gt.shape[3]))
 
         mono_sdl, mono_sdl_mask = sparse_depth_loss(mono_pred, depth_gt, l2=False, reduce=False)
         stereo_sdl, stereo_sdl_mask = sparse_depth_loss(stereo_pred, depth_gt, l2=False, reduce=False)
@@ -249,7 +249,7 @@ def depth_aux_mask_loss(data_dict, alpha=None, roi=None, options=()):
 
     for scale, mono_pred in enumerate(mono_preds):
         if mono_pred.shape[2] != depth_gt.shape[2]:
-            mono_pred = torch.nn.functional.upsample(mono_pred, (depth_gt.shape[2], depth_gt.shape[3]))
+            mono_pred = torch.nn.functional.interpolate(mono_pred, (depth_gt.shape[2], depth_gt.shape[3]))
 
         mono_sdl, mono_sdl_mask = sparse_depth_loss(mono_pred, depth_gt, l2=False, reduce=False)
         mono_sdl_sum += mask_mean(mono_sdl.detach(), mono_sdl_mask | cv_mask)
@@ -322,9 +322,9 @@ def depth_refinement_loss(data_dict, alpha=None, roi=None, options=()):
 
     for scale, (mono_pred, stereo_pred) in enumerate(zip(mono_preds, stereo_preds)):
         if mono_pred.shape[2] != depth_gt.shape[2]:
-            mono_pred = torch.nn.functional.upsample(mono_pred, (depth_gt.shape[2], depth_gt.shape[3]))
+            mono_pred = torch.nn.functional.interpolate(mono_pred, (depth_gt.shape[2], depth_gt.shape[3]))
             if use_mono_stereodl:
-                stereo_pred = torch.nn.functional.upsample(stereo_pred, (depth_gt.shape[2], depth_gt.shape[3]))
+                stereo_pred = torch.nn.functional.interpolate(stereo_pred, (depth_gt.shape[2], depth_gt.shape[3]))
 
         if use_mono_stereodl:
             stereo_pred = stereo_pred.detach()

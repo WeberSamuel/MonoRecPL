@@ -276,7 +276,7 @@ def to(data, device):
         return data.to(device)
 
 
-def infnan_to_zero(t:torch.Tensor()):
+def infnan_to_zero(t:torch.Tensor):
     t[torch.isinf(t)] = 0
     t[torch.isnan(t)] = 0
     return t
